@@ -32,10 +32,10 @@ endif
 all: Park_Sensors.elf
 
 # Tool invocations
-Park_Sensors.elf: $(OBJS) $(USER_OBJS) C:\workspace\Park_Sensors\LinkerScript.ld
+Park_Sensors.elf: $(OBJS) $(USER_OBJS) C:\Users\Rafa³\Documents\GitHub\ParkSensors\Park_Sensors\LinkerScript.ld
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T"C:\workspace\Park_Sensors\LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Park_Sensors.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T"C:\Users\Rafa³\Documents\GitHub\ParkSensors\Park_Sensors\LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Park_Sensors.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
