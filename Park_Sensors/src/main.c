@@ -77,8 +77,8 @@ void tim2_init(void)
 	//timer wykorzystywany do odliczania czasu trwania sygnalow ECHO
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 	TIM_TimeBaseInitTypeDef Timer2;
-	/* Przeladowanie nastepuje co 10us */
-	Timer2.TIM_Period =9999;
+	/* czestotliwosc przeladowania nas nie interesuje */
+	Timer2.TIM_Period =999999;
 	Timer2.TIM_Prescaler = 83;
 	Timer2.TIM_ClockDivision = TIM_CKD_DIV1;
 	Timer2.TIM_CounterMode =  TIM_CounterMode_Up;
