@@ -1,19 +1,10 @@
-/**
-  ******************************************************************************
-  * @file    main.c
-  * @author  Ac6
-  * @version V1.0
-  * @date    01-December-2013
-  * @brief   Default main function.
-  ******************************************************************************
-*/
-
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 
-int i=0;
+int i=0, j=0, lewa=0, srodek=0, prawa=0;
 int TIM3_CNT;
 float Distance_1, Distance_2, Distance_3;
+
 ///////////////////////// CZUJNIK I /////////////////////////////////
 void ECHO1_IRQ_config(void)
 {
@@ -94,6 +85,14 @@ void EXTI4_IRQHandler(void)
     		TIM_Cmd(TIM3, DISABLE);
 			TIM3_CNT = TIM3->CNT;
 			Distance_1 = TIM3_CNT*0.01724137931;
+			if(TIM3_CNT > 8642)//ok 150 cm
+				lewa=0;
+			if(TIM3_CNT <= 8642 && TIM3_CNT > 5742) // miedzy 150 a 100 cm
+				lewa=1;
+			if(TIM3_CNT <= 5742 && TIM3_CNT > 2262) // miedzy 100 a 40 cm
+				lewa=2;
+			if(TIM3_CNT <= 2262) // ponizej 40 cm
+				lewa=3;
 			EXTI_Line_4_Disable();
 			EXTI_ClearITPendingBit(EXTI_Line4);
 		}
@@ -179,11 +178,20 @@ void EXTI2_IRQHandler(void)
     		TIM_Cmd(TIM3, DISABLE);
 			TIM3_CNT = TIM3->CNT;
 			Distance_2 = TIM3_CNT*0.01724137931;
+			if(TIM3_CNT > 8642)
+				srodek=0;
+			if(TIM3_CNT <= 8642 && TIM3_CNT > 5742)
+				srodek=1;
+			if(TIM3_CNT <= 5742 && TIM3_CNT > 2262)
+				srodek=2;
+			if(TIM3_CNT <= 2262)
+				srodek=3;
 			EXTI_Line_2_Disable();
 			EXTI_ClearITPendingBit(EXTI_Line2);
 		}
     }
-}///////////////////////// CZUJNIK III /////////////////////////////////
+}
+///////////////////////// CZUJNIK III /////////////////////////////////
 void ECHO3_IRQ_config(void)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
@@ -263,6 +271,14 @@ void EXTI0_IRQHandler(void)
     		TIM_Cmd(TIM3, DISABLE);
 			TIM3_CNT = TIM3->CNT;
 			Distance_3 = TIM3_CNT*0.01724137931;
+			if(TIM3_CNT > 8642)
+				prawa=0;
+			if(TIM3_CNT <= 8642 && TIM3_CNT > 5742)
+				prawa=1;
+			if(TIM3_CNT <= 5742 && TIM3_CNT > 2262)
+				prawa=2;
+			if(TIM3_CNT <= 2262)
+				prawa=3;
 			EXTI_Line_0_Disable();
 			EXTI_ClearITPendingBit(EXTI_Line0);
 		}
@@ -385,6 +401,83 @@ void TIM7_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
 	}
 }
+///////////////////////// WYSWIETLACZ /////////////////////////////////
+void display_init(void)
+{
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+
+	GPIO_InitTypeDef  GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+}
+void tim5_init()
+{
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
+
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+
+	TIM_TimeBaseStructure.TIM_Period = 400-1;
+	TIM_TimeBaseStructure.TIM_Prescaler = 525-1;
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_CounterMode =  TIM_CounterMode_Up;
+	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+	TIM_TimeBaseInit(TIM5, &TIM_TimeBaseStructure);
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = TIM5_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x02;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+	TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);
+
+	TIM_Cmd(TIM5, ENABLE);
+}
+void TIM5_IRQHandler(void)
+{
+	if(TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
+	{
+		switch(j)
+		{
+		case 0:{ GPIO_SetBits(GPIOD,GPIO_Pin_4);GPIO_ResetBits(GPIOD, GPIO_Pin_2|GPIO_Pin_1|GPIO_Pin_3);
+			switch(lewa)
+			{
+			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			}
+		j++;};break;
+		case 1:{ GPIO_SetBits(GPIOD,GPIO_Pin_2|GPIO_Pin_3);GPIO_ResetBits(GPIOD, GPIO_Pin_1|GPIO_Pin_4);
+			switch(srodek)
+			{
+			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			}
+		j++;};break;
+		case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_1);GPIO_ResetBits(GPIOD, GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4);
+			switch(prawa)
+			{
+			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			}
+		j++;};break;
+		}
+	if(j>2)
+		j=0;
+	TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+	}
+}
 int main(void)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
@@ -392,6 +485,8 @@ int main(void)
 
 	hcsr04_1_init();
 	hcsr04_3_init();
+	display_init();
+	tim5_init();
 	tim2_init();
 	tim3_init();
 	tim7_init();
