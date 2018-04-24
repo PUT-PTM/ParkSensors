@@ -101,10 +101,10 @@ void EXTI4_IRQHandler(void)
 ///////////////////////// CZUJNIK II /////////////////////////////////
 void ECHO2_IRQ_config(void)
 {
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
 
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOE, EXTI_PinSource2);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource2);
 
 	EXTI_InitTypeDef EXTI_InitStruct;
 	EXTI_InitStruct.EXTI_Line = EXTI_Line2;
@@ -122,7 +122,7 @@ void ECHO2_IRQ_config(void)
 }
 void hcsr04_2_init(void)
 {
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 
     GPIO_InitTypeDef  Trigger2;
     Trigger2.GPIO_Pin = GPIO_Pin_3;
@@ -130,7 +130,7 @@ void hcsr04_2_init(void)
     Trigger2.GPIO_OType = GPIO_OType_PP;
     Trigger2.GPIO_Speed = GPIO_Speed_100MHz;
     Trigger2.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOE, &Trigger2);
+    GPIO_Init(GPIOA, &Trigger2);
 
     GPIO_InitTypeDef  Echo2;
     Echo2.GPIO_Pin = GPIO_Pin_2;
@@ -138,7 +138,7 @@ void hcsr04_2_init(void)
     Echo2.GPIO_OType = GPIO_OType_PP;
     Echo2.GPIO_Speed = GPIO_Speed_100MHz;
     Echo2.GPIO_PuPd = GPIO_PuPd_UP;
-    GPIO_Init(GPIOE, &Echo2);
+    GPIO_Init(GPIOA, &Echo2);
 
     ECHO2_IRQ_config();
 }
@@ -151,7 +151,7 @@ void EXTI_Line_2_Enable(void)
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
 	EXTI_Init(&EXTI_InitStructure);
 
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOE, EXTI_PinSource2);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource2);
 }
 void EXTI_Line_2_Disable(void)
 {
@@ -162,22 +162,22 @@ void EXTI_Line_2_Disable(void)
 	EXTI_InitStructure.EXTI_LineCmd = DISABLE;
 	EXTI_Init(&EXTI_InitStructure);
 
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOE, EXTI_PinSource2);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource2);
 }
 void EXTI2_IRQHandler(void)
 {
     if (EXTI_GetITStatus(EXTI_Line2) != RESET)
     {
-    	if (GPIO_ReadInputDataBit(GPIOE, GPIO_Pin_2))
+    	if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2))
     	{
     		TIM_Cmd(TIM3, ENABLE);
     		EXTI_ClearITPendingBit(EXTI_Line2);
     	}
-    	else if (!GPIO_ReadInputDataBit(GPIOE, GPIO_Pin_2))
+    	else if (!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2))
 		{
     		TIM_Cmd(TIM3, DISABLE);
 			TIM3_CNT = TIM3->CNT;
-			Distance_2 = TIM3_CNT*0.01724137931;
+			Distance_3 = TIM3_CNT*0.01724137931;
 			if(TIM3_CNT > 8642)
 				srodek=0;
 			if(TIM3_CNT <= 8642 && TIM3_CNT > 5742)
@@ -327,10 +327,10 @@ void TIM2_IRQHandler(void)
 			TIM_Cmd(TIM7,ENABLE);
 			};break;
 		case 1:{
-			/*EXTI_Line_2_Enable();
-			GPIO_ResetBits(GPIOE,GPIO_Pin_3);
-			GPIO_SetBits(GPIOE,GPIO_Pin_3);
-			TIM_Cmd(TIM7,ENABLE);*/
+			EXTI_Line_2_Enable();
+			GPIO_ResetBits(GPIOA,GPIO_Pin_3);
+			GPIO_SetBits(GPIOA,GPIO_Pin_3);
+			TIM_Cmd(TIM7,ENABLE);
 			};break;
 		case 2:{
 			EXTI_Line_0_Enable();
@@ -390,8 +390,8 @@ void TIM7_IRQHandler(void)
 			TIM_Cmd(TIM7, DISABLE);
 		};break;
 		case 1:{
-			/*GPIO_ResetBits(GPIOE,GPIO_Pin_3);
-			TIM_Cmd(TIM7, DISABLE);*/
+			GPIO_ResetBits(GPIOA,GPIO_Pin_3);
+			TIM_Cmd(TIM7, DISABLE);
 		};break;
 		case 2:{
 			GPIO_ResetBits(GPIOE,GPIO_Pin_1);
@@ -484,6 +484,7 @@ int main(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
 	hcsr04_1_init();
+	hcsr04_2_init();
 	hcsr04_3_init();
 	display_init();
 	tim5_init();
