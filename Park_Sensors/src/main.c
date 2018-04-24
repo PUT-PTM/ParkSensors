@@ -449,27 +449,27 @@ void TIM5_IRQHandler(void)
 			switch(lewa)
 			{
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
-			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
-			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
-			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7); GPIO_SetBits(GPIOA, GPIO_Pin_7);};break;
 			}
 		j++;};break;
 		case 1:{ GPIO_SetBits(GPIOD,GPIO_Pin_2|GPIO_Pin_3);GPIO_ResetBits(GPIOD, GPIO_Pin_1|GPIO_Pin_4);
 			switch(srodek)
 			{
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
-			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
-			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
-			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7); GPIO_SetBits(GPIOA, GPIO_Pin_7);};break;
 			}
 		j++;};break;
 		case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_1);GPIO_ResetBits(GPIOD, GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4);
 			switch(prawa)
 			{
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
-			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
-			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
-			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7); GPIO_SetBits(GPIOA, GPIO_Pin_7);};break;
 			}
 		j++;};break;
 		}
@@ -477,6 +477,19 @@ void TIM5_IRQHandler(void)
 		j=0;
 	TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 	}
+}
+///////////////////////// BUZZER /////////////////////////////////
+void Buzz_init(void)
+{
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+
+    GPIO_InitTypeDef  Buzz;
+    Buzz.GPIO_Pin = GPIO_Pin_7;
+    Buzz.GPIO_Mode = GPIO_Mode_OUT;
+    Buzz.GPIO_OType = GPIO_OType_PP;
+    Buzz.GPIO_Speed = GPIO_Speed_100MHz;
+    Buzz.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOA, &Buzz);
 }
 int main(void)
 {
@@ -487,6 +500,7 @@ int main(void)
 	hcsr04_2_init();
 	hcsr04_3_init();
 	display_init();
+	Buzz_init();
 	tim5_init();
 	tim2_init();
 	tim3_init();
