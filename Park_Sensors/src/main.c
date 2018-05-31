@@ -355,6 +355,37 @@ void tim3_init(void)
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	TIM_Cmd(TIM3, DISABLE);
 }
+void tim4_init(void)
+{
+	/*pika buzzerem*/
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+	
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_TimeBaseStructure.TIM_Period = 8400-1;
+	TIM_TimeBaseStructure.TIM_Prescaler = 1000-1;
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_CounterMode =  TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	TIM_Cmd(TIM4, ENABLE);
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x02;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+}
+void TIM4_IRQHandler(void)
+{
+	if(TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
+	{
+		GPIO_ToggleBits(GPIOA, GPIO_Pin_7);
+		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+	}
+}
 void tim7_init(void)
 {
 	/*czas trwania sygnalu trig*/
@@ -401,6 +432,48 @@ void TIM7_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
 	}
 }
+///////////////////////// BUZZER /////////////////////////////////
+void Buzz_init(void)
+{
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+
+    GPIO_InitTypeDef  Buzz;
+    Buzz.GPIO_Pin = GPIO_Pin_7;
+    Buzz.GPIO_Mode = GPIO_Mode_OUT;
+    Buzz.GPIO_OType = GPIO_OType_PP;
+    Buzz.GPIO_Speed = GPIO_Speed_100MHz;
+    Buzz.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOA, &Buzz);
+}
+void buzz(void)
+{
+	int max=0;
+
+	if(lewa==0 && srodek==0 && prawa==0)
+		TIM_Cmd(TIM4, DISABLE);
+	else
+		TIM_Cmd(TIM4, ENABLE);
+
+	if(lewa >= srodek && lewa >= prawa)
+		max = lewa;
+	if(srodek >= lewa && srodek >= prawa)
+		max = srodek;
+	if(prawa >= lewa && prawa >= srodek)
+		max = prawa;
+
+	if(max==1)
+	{
+		TIM4->CNT=0;
+		TIM4->PSC=10000-1;
+	}
+	if(max==2)
+	{
+		TIM4->CNT=0;
+		TIM4->PSC=5000-1;
+	}
+	if(max==3)
+		TIM4->PSC=1000-1;
+}
 ///////////////////////// WYSWIETLACZ /////////////////////////////////
 void display_init(void)
 {
@@ -420,8 +493,8 @@ void tim5_init()
 
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
-	TIM_TimeBaseStructure.TIM_Period = 400-1;
-	TIM_TimeBaseStructure.TIM_Prescaler = 525-1;
+	TIM_TimeBaseStructure.TIM_Period = 800-1;
+	TIM_TimeBaseStructure.TIM_Prescaler = 900-1;
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_CounterMode =  TIM_CounterMode_Up;
 	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
@@ -443,6 +516,7 @@ void TIM5_IRQHandler(void)
 {
 	if(TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
 	{
+		buzz();
 		switch(j)
 		{
 		case 0:{ GPIO_SetBits(GPIOD,GPIO_Pin_4);GPIO_ResetBits(GPIOD, GPIO_Pin_2|GPIO_Pin_1|GPIO_Pin_3);
@@ -451,7 +525,7 @@ void TIM5_IRQHandler(void)
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
 			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
-			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7); GPIO_SetBits(GPIOA, GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			}
 		j++;};break;
 		case 1:{ GPIO_SetBits(GPIOD,GPIO_Pin_2|GPIO_Pin_3);GPIO_ResetBits(GPIOD, GPIO_Pin_1|GPIO_Pin_4);
@@ -460,7 +534,7 @@ void TIM5_IRQHandler(void)
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
 			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
-			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7); GPIO_SetBits(GPIOA, GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			}
 		j++;};break;
 		case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_1);GPIO_ResetBits(GPIOD, GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4);
@@ -469,7 +543,7 @@ void TIM5_IRQHandler(void)
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
 			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
-			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7); GPIO_SetBits(GPIOA, GPIO_Pin_7);};break;
+			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			}
 		j++;};break;
 		}
@@ -477,19 +551,6 @@ void TIM5_IRQHandler(void)
 		j=0;
 	TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 	}
-}
-///////////////////////// BUZZER /////////////////////////////////
-void Buzz_init(void)
-{
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-
-    GPIO_InitTypeDef  Buzz;
-    Buzz.GPIO_Pin = GPIO_Pin_7;
-    Buzz.GPIO_Mode = GPIO_Mode_OUT;
-    Buzz.GPIO_OType = GPIO_OType_PP;
-    Buzz.GPIO_Speed = GPIO_Speed_100MHz;
-    Buzz.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOA, &Buzz);
 }
 int main(void)
 {
@@ -501,6 +562,7 @@ int main(void)
 	hcsr04_3_init();
 	display_init();
 	Buzz_init();
+	tim4_init();
 	tim5_init();
 	tim2_init();
 	tim3_init();
