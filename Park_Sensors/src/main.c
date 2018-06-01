@@ -382,7 +382,7 @@ void TIM4_IRQHandler(void)
 {
 	if(TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
 	{
-		GPIO_ToggleBits(GPIOA, GPIO_Pin_7);
+		GPIO_ToggleBits(GPIOC, GPIO_Pin_1);
 		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}
 }
@@ -435,15 +435,15 @@ void TIM7_IRQHandler(void)
 ///////////////////////// BUZZER /////////////////////////////////
 void Buzz_init(void)
 {
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 
     GPIO_InitTypeDef  Buzz;
-    Buzz.GPIO_Pin = GPIO_Pin_7;
+    Buzz.GPIO_Pin = GPIO_Pin_1;
     Buzz.GPIO_Mode = GPIO_Mode_OUT;
     Buzz.GPIO_OType = GPIO_OType_PP;
     Buzz.GPIO_Speed = GPIO_Speed_100MHz;
     Buzz.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOA, &Buzz);
+    GPIO_Init(GPIOC, &Buzz);
 }
 void buzz(void)
 {
@@ -452,7 +452,7 @@ void buzz(void)
 	if(lewa==0 && srodek==0 && prawa==0)
 	{
 		TIM_Cmd(TIM4, DISABLE);
-		GPIO_ResetBits(GPIOA,GPIO_Pin_7);
+		GPIO_ResetBits(GPIOC,GPIO_Pin_1);
 	}
 	else
 		TIM_Cmd(TIM4, ENABLE);
