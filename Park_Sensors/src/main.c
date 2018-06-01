@@ -450,7 +450,10 @@ void buzz(void)
 	int max=0;
 
 	if(lewa==0 && srodek==0 && prawa==0)
+	{
 		TIM_Cmd(TIM4, DISABLE);
+		GPIO_ResetBits(GPIOA,GPIO_Pin_7);
+	}
 	else
 		TIM_Cmd(TIM4, ENABLE);
 
@@ -463,12 +466,10 @@ void buzz(void)
 
 	if(max==1)
 	{
-		TIM4->CNT=0;
 		TIM4->PSC=10000-1;
 	}
 	if(max==2)
 	{
-		TIM4->CNT=0;
 		TIM4->PSC=5000-1;
 	}
 	if(max==3)
@@ -523,8 +524,8 @@ void TIM5_IRQHandler(void)
 			switch(lewa)
 			{
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
-			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
-			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
 			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			}
 		j++;};break;
@@ -532,8 +533,8 @@ void TIM5_IRQHandler(void)
 			switch(srodek)
 			{
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
-			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
-			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
 			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			}
 		j++;};break;
@@ -541,8 +542,8 @@ void TIM5_IRQHandler(void)
 			switch(prawa)
 			{
 			case 0:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
-			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
-			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);GPIO_ResetBits(GPIOA, GPIO_Pin_7);};break;
+			case 1:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5);};break;
+			case 2:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_7);};break;
 			case 3:{GPIO_SetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);GPIO_ResetBits(GPIOD,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);};break;
 			}
 		j++;};break;
