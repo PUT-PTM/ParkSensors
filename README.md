@@ -68,9 +68,9 @@
 	2) Changing the ultrasonic sensors for a more reliable and weather resistant model.
 	3) A better and easier to use display.
 
-#License: MIT
+# License: MIT
 
-#Credits:
+# Credits:
 	Rafał Isbrandt
 	Konrad Grzelczyk
 
