@@ -291,8 +291,8 @@ void tim2_init(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	TIM_TimeBaseStructure.TIM_Period = 2100;
-	TIM_TimeBaseStructure.TIM_Prescaler = 4000;
+	TIM_TimeBaseStructure.TIM_Period = 2100-1;
+	TIM_TimeBaseStructure.TIM_Prescaler = 4000-1;
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_CounterMode =  TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
@@ -346,7 +346,6 @@ void tim3_init(void)
 {
 	/*mierzy czas trwania sygnalow echo*/
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	/*f inc = 1 000 000 (T=1us)*/
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_TimeBaseStructure.TIM_Period = 99999;
 	TIM_TimeBaseStructure.TIM_Prescaler = 83;
