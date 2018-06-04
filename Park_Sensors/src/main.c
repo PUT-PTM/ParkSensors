@@ -1,9 +1,12 @@
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
+#define I	8642 //150 cm
+#define II	5742 //100 cm
+#define III	2262 //40 cm
 
 int i=0, j=0, lewa=0, srodek=0, prawa=0;
-int TIM3_CNT;
-float Distance_1, Distance_2, Distance_3;
+uint32_t TIM3_CNT;
+//float Distance_1, Distance_2, Distance_3;
 
 ///////////////////////// CZUJNIK I /////////////////////////////////
 void ECHO1_IRQ_config(void)
@@ -84,14 +87,14 @@ void EXTI4_IRQHandler(void)
 		{
     		TIM_Cmd(TIM3, DISABLE);
 			TIM3_CNT = TIM3->CNT;
-			Distance_1 = TIM3_CNT*0.01724137931;
-			if(TIM3_CNT > 8642)//ok 150 cm
+			//Distance_1 = TIM3_CNT*0.01724137931;
+			if(TIM3_CNT > I)
 				lewa=0;
-			if(TIM3_CNT <= 8642 && TIM3_CNT > 5742) // miedzy 150 a 100 cm
+			if(TIM3_CNT <= I && TIM3_CNT > II)
 				lewa=1;
-			if(TIM3_CNT <= 5742 && TIM3_CNT > 2262) // miedzy 100 a 40 cm
+			if(TIM3_CNT <= II && TIM3_CNT > III)
 				lewa=2;
-			if(TIM3_CNT <= 2262) // ponizej 40 cm
+			if(TIM3_CNT <= III)
 				lewa=3;
 			EXTI_Line_4_Disable();
 			EXTI_ClearITPendingBit(EXTI_Line4);
@@ -177,14 +180,14 @@ void EXTI2_IRQHandler(void)
 		{
     		TIM_Cmd(TIM3, DISABLE);
 			TIM3_CNT = TIM3->CNT;
-			Distance_3 = TIM3_CNT*0.01724137931;
-			if(TIM3_CNT > 8642)
+			//Distance_2 = TIM3_CNT*0.01724137931;
+			if(TIM3_CNT > I)
 				srodek=0;
-			if(TIM3_CNT <= 8642 && TIM3_CNT > 5742)
+			if(TIM3_CNT <= I && TIM3_CNT > II)
 				srodek=1;
-			if(TIM3_CNT <= 5742 && TIM3_CNT > 2262)
+			if(TIM3_CNT <= II && TIM3_CNT > III)
 				srodek=2;
-			if(TIM3_CNT <= 2262)
+			if(TIM3_CNT <= III)
 				srodek=3;
 			EXTI_Line_2_Disable();
 			EXTI_ClearITPendingBit(EXTI_Line2);
@@ -270,19 +273,62 @@ void EXTI0_IRQHandler(void)
 		{
     		TIM_Cmd(TIM3, DISABLE);
 			TIM3_CNT = TIM3->CNT;
-			Distance_3 = TIM3_CNT*0.01724137931;
-			if(TIM3_CNT > 8642)
+			//Distance_3 = TIM3_CNT*0.01724137931;
+			if(TIM3_CNT > I)
 				prawa=0;
-			if(TIM3_CNT <= 8642 && TIM3_CNT > 5742)
+			if(TIM3_CNT <= I && TIM3_CNT > II)
 				prawa=1;
-			if(TIM3_CNT <= 5742 && TIM3_CNT > 2262)
+			if(TIM3_CNT <= II && TIM3_CNT > III)
 				prawa=2;
-			if(TIM3_CNT <= 2262)
+			if(TIM3_CNT <= III)
 				prawa=3;
 			EXTI_Line_0_Disable();
 			EXTI_ClearITPendingBit(EXTI_Line0);
 		}
     }
+}
+///////////////////////// BUZZER /////////////////////////////////
+void Buzz_init(void)
+{
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+
+    GPIO_InitTypeDef  Buzz;
+    Buzz.GPIO_Pin = GPIO_Pin_1;
+    Buzz.GPIO_Mode = GPIO_Mode_OUT;
+    Buzz.GPIO_OType = GPIO_OType_PP;
+    Buzz.GPIO_Speed = GPIO_Speed_100MHz;
+    Buzz.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOC, &Buzz);
+}
+void buzz(void)
+{
+	int max=0;
+
+	if(lewa==0 && srodek==0 && prawa==0)
+	{
+		TIM_Cmd(TIM4, DISABLE);
+		GPIO_ResetBits(GPIOC,GPIO_Pin_1);
+	}
+	else
+		TIM_Cmd(TIM4, ENABLE);
+
+	if(lewa >= srodek && lewa >= prawa)
+		max = lewa;
+	if(srodek >= lewa && srodek >= prawa)
+		max = srodek;
+	if(prawa >= lewa && prawa >= srodek)
+		max = prawa;
+
+	if(max==1)
+	{
+		TIM4->PSC=10000-1;
+	}
+	if(max==2)
+	{
+		TIM4->PSC=5000-1;
+	}
+	if(max==3)
+		TIM4->PSC=1000-1;
 }
 ///////////////////////// SEKCJA TIMERÓW /////////////////////////////////
 void tim2_init(void)
@@ -313,6 +359,7 @@ void TIM2_IRQHandler(void)
 {
 	if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
 	{
+		buzz();
 		TIM_SetCounter(TIM3,0);
 		TIM_SetCounter(TIM7,0);
 		i++;
@@ -431,49 +478,6 @@ void TIM7_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
 	}
 }
-///////////////////////// BUZZER /////////////////////////////////
-void Buzz_init(void)
-{
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
-
-    GPIO_InitTypeDef  Buzz;
-    Buzz.GPIO_Pin = GPIO_Pin_1;
-    Buzz.GPIO_Mode = GPIO_Mode_OUT;
-    Buzz.GPIO_OType = GPIO_OType_PP;
-    Buzz.GPIO_Speed = GPIO_Speed_100MHz;
-    Buzz.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOC, &Buzz);
-}
-void buzz(void)
-{
-	int max=0;
-
-	if(lewa==0 && srodek==0 && prawa==0)
-	{
-		TIM_Cmd(TIM4, DISABLE);
-		GPIO_ResetBits(GPIOC,GPIO_Pin_1);
-	}
-	else
-		TIM_Cmd(TIM4, ENABLE);
-
-	if(lewa >= srodek && lewa >= prawa)
-		max = lewa;
-	if(srodek >= lewa && srodek >= prawa)
-		max = srodek;
-	if(prawa >= lewa && prawa >= srodek)
-		max = prawa;
-
-	if(max==1)
-	{
-		TIM4->PSC=10000-1;
-	}
-	if(max==2)
-	{
-		TIM4->PSC=5000-1;
-	}
-	if(max==3)
-		TIM4->PSC=1000-1;
-}
 ///////////////////////// WYSWIETLACZ /////////////////////////////////
 void display_init(void)
 {
@@ -516,7 +520,6 @@ void TIM5_IRQHandler(void)
 {
 	if(TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
 	{
-		buzz();
 		switch(j)
 		{
 		case 0:{ GPIO_SetBits(GPIOD,GPIO_Pin_4);GPIO_ResetBits(GPIOD, GPIO_Pin_2|GPIO_Pin_1|GPIO_Pin_3);

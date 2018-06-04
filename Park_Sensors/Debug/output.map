@@ -4841,42 +4841,42 @@ LOAD c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15
  .text.EXTI0_IRQHandler
                 0x08001688      0x104 src/main.o
                 0x08001688                EXTI0_IRQHandler
- .text.tim2_init
-                0x0800178c       0x6e src/main.o
-                0x0800178c                tim2_init
- *fill*         0x080017fa        0x2 
- .text.TIM2_IRQHandler
-                0x080017fc       0xc8 src/main.o
-                0x080017fc                TIM2_IRQHandler
- .text.tim3_init
-                0x080018c4       0x40 src/main.o
-                0x080018c4                tim3_init
- .text.tim4_init
-                0x08001904       0x6c src/main.o
-                0x08001904                tim4_init
- .text.TIM4_IRQHandler
-                0x08001970       0x30 src/main.o
-                0x08001970                TIM4_IRQHandler
- .text.tim7_init
-                0x080019a0       0x68 src/main.o
-                0x080019a0                tim7_init
- .text.TIM7_IRQHandler
-                0x08001a08       0x74 src/main.o
-                0x08001a08                TIM7_IRQHandler
  .text.Buzz_init
-                0x08001a7c       0x38 src/main.o
-                0x08001a7c                Buzz_init
- .text.buzz     0x08001ab4       0xdc src/main.o
-                0x08001ab4                buzz
+                0x0800178c       0x38 src/main.o
+                0x0800178c                Buzz_init
+ .text.buzz     0x080017c4       0xdc src/main.o
+                0x080017c4                buzz
+ .text.tim2_init
+                0x080018a0       0x6e src/main.o
+                0x080018a0                tim2_init
+ *fill*         0x0800190e        0x2 
+ .text.TIM2_IRQHandler
+                0x08001910       0xcc src/main.o
+                0x08001910                TIM2_IRQHandler
+ .text.tim3_init
+                0x080019dc       0x40 src/main.o
+                0x080019dc                tim3_init
+ .text.tim4_init
+                0x08001a1c       0x6c src/main.o
+                0x08001a1c                tim4_init
+ .text.TIM4_IRQHandler
+                0x08001a88       0x30 src/main.o
+                0x08001a88                TIM4_IRQHandler
+ .text.tim7_init
+                0x08001ab8       0x68 src/main.o
+                0x08001ab8                tim7_init
+ .text.TIM7_IRQHandler
+                0x08001b20       0x74 src/main.o
+                0x08001b20                TIM7_IRQHandler
  .text.display_init
-                0x08001b90       0x38 src/main.o
-                0x08001b90                display_init
+                0x08001b94       0x38 src/main.o
+                0x08001b94                display_init
  .text.tim5_init
-                0x08001bc8       0x70 src/main.o
-                0x08001bc8                tim5_init
+                0x08001bcc       0x70 src/main.o
+                0x08001bcc                tim5_init
  .text.TIM5_IRQHandler
-                0x08001c38      0x1d0 src/main.o
-                0x08001c38                TIM5_IRQHandler
+                0x08001c3c      0x1cc src/main.o
+                0x08001c3c                TIM5_IRQHandler
  .text.main     0x08001e08       0x40 src/main.o
                 0x08001e08                main
  .text.SystemInit
