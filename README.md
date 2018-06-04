@@ -28,7 +28,9 @@
 	2nd level - 2 Hz beeping
 	3rd level - 10 Hz beeping
 
-	![My image](https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
+![How_it_works]
+(https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
+
 
 # Tools:
 	Used software is System WorkBench for STM32 (version 2.2.0)
