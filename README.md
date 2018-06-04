@@ -1,9 +1,9 @@
 ﻿# ParkSensors
 
-# Overview
+## Overview
 	University project. Main idea is to program Park Sensor based on STM32F4 Discovery.
 
-# Description:
+## Description:
 	Hardware used:
 	- STM32F4 Discovery
 	- 3x HC-SR04 Ultrasonic sensors
@@ -28,18 +28,18 @@
 	2nd level - 2 Hz beeping
 	3rd level - 10 Hz beeping
 
-# How it works
+### How it works
 ![How_it_works](https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
 
-# Watch the video
+### Watch the video
 [![Watch the video](https://img.youtube.com/vi/Wq1tUOCfatI/0.jpg)](https://youtu.be/Wq1tUOCfatI)
 
 
-# Tools:
+## Tools:
 	Used software is System WorkBench for STM32 (version 2.2.0)
 	Code based on Standard Peripheral Library which is not supported on higher version of compiler.
 
-# How to run:
+## How to run:
 	Download the code, build and run it on System WorkBench for STM32 (v. 2.2.0) or other compatible STM32 compiler remembering about the appropriate code adaptation.
 
 	Connect following pins:
@@ -70,14 +70,14 @@
 		- Short pin ---> GND pin
 		- Long pin  ---> PC1
 
-# Future improvements:
+## Future improvements:
 	1) Control of the buzzer through the transistor to protect against short-circuiting.
 	2) Changing the ultrasonic sensors for a more reliable and weather resistant model.
 	3) A better and easier to use display.
 
-# License: MIT
+## License: MIT
 
-# Credits:
+## Credits:
 	Rafał Isbrandt
 	Konrad Grzelczyk
 
