@@ -30,6 +30,8 @@
 
 ![How_it_works](https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
 
+[![Watch the video](https://img.youtube.com/vi/<Wq1tUOCfatI>/0.jpg)](https://youtu.be/Wq1tUOCfatI)
+
 
 # Tools:
 	Used software is System WorkBench for STM32 (version 2.2.0)
