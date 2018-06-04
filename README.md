@@ -28,8 +28,7 @@
 	2nd level - 2 Hz beeping
 	3rd level - 10 Hz beeping
 
-![How_it_works]
-(https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
+![How_it_works](https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
 
 
 # Tools:
