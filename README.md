@@ -28,12 +28,14 @@
 	2nd level - 2 Hz beeping
 	3rd level - 10 Hz beeping
 
+	![My image](https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
+
 # Tools:
 	Used software is System WorkBench for STM32 (version 2.2.0)
-	Code based on Standard Peripheral Liblary which is not supported on higher version of compiler.
+	Code based on Standard Peripheral Library which is not supported on higher version of compiler.
 
 # How to run:
-	Download the code and run it on System WorkBench for STM32 (v. 2.2.0) or other compatible STM32 compiler remembering about the appropriate code adaptation.
+	Download the code, build and run it on System WorkBench for STM32 (v. 2.2.0) or other compatible STM32 compiler remembering about the appropriate code adaptation.
 
 	Connect following pins:
 		HC-SR04:
