@@ -32,7 +32,7 @@
 ![How_it_works](https://raw.githubusercontent.com/PUT-PTM/ParkSensors/master/How_it_works.png)
 
 ### Watch the video
-[![Watch the video](https://img.youtube.com/vi/Wq1tUOCfatI/0.jpg)](https://youtu.be/Wq1tUOCfatI)
+[![Watch the video](https://lh6.googleusercontent.com/OFgbDnO4QD3ymH1qs0G89vYilVuqE3qjcVsQxzORJ-7Qj1rrmnKjHuhwmIKeBkb1LW3TrpXxGgrGXZrUFx5v=w1280-h720-n-k-rw)](https://drive.google.com/file/d/1_v4cLk3lcbSohKsewVdxBtgx9lF0XJH4/view)
 
 
 ## Tools:
